@@ -1,2 +1,2 @@
 # haibun-wildduck
-Features for email using Wilduck server
+Features for testing standard email facilities.
