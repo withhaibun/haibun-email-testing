@@ -1,16 +1,28 @@
 {
-  "name": "@haibun/email-wildduck",
+  "name": "@haibun/email-testing",
   "version": "1.1.0",
   "description": "",
   "main": "build/web-http.js",
   "files": [
     "build/"
   ],
+  "jest": {
+    "roots": [
+      "<rootDir>/src"
+    ],
+    "testMatch": [
+      "**/__tests__ /**/*.+(ts|tsx|js)",
+      "**/?(*.)+(spec|test).+(ts|tsx|js)"
+    ],
+    "transform": {
+      "^.+\\.(ts|tsx)$": "ts-jest"
+    }
+  },
   "scripts": {
     "prepublishOnly": "tsc -b .",
     "tsc-watch": "tsc -b . --watch",
-    "test": "jest --config jest.config.ts",
-    "test-watch": "jest --config jest.config.ts --watch"
+    "test": "jest",
+    "test-watch": "jest --watch"
   },
   "keywords": [],
   "author": "",

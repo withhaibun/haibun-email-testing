@@ -11,7 +11,7 @@ import { actionNotOK, getStepperOption, stringOrError } from '@haibun/core/build
 const EMAIL_SERVER = 'EMAIL_SERVER';
 const EMAIL_MESSAGE = 'EMAIL_MESSAGE';
 
-const EmailWildduckStepper = class EmailWildduckStepper extends AStepper implements IHasOptions {
+const EmailTestingStepper = class EmailTestingStepper extends AStepper implements IHasOptions {
     // requireDomains = [EMAIL_SERVER, EMAIL_MESSAGE];
     options = {
         [EMAIL_SERVER]: {
@@ -107,4 +107,4 @@ const EmailWildduckStepper = class EmailWildduckStepper extends AStepper impleme
     }
 }
 
-export default EmailWildduckStepper;
+export default EmailTestingStepper;
