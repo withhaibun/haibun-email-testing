@@ -5,8 +5,6 @@ const { spf } = require('mailauth/lib/spf');
 const { getPolicy, validateMx } = require('mailauth/lib/mta-sts');
 
 
-const gmail = 'gmail.com';
-
 import { AStepper, IHasOptions, OK, TWorld } from "@haibun/core/build/lib/defs";
 import { actionNotOK, getStepperOption, stringOrError } from '@haibun/core/build/lib/util';
 
@@ -14,7 +12,7 @@ const EMAIL_SERVER = 'EMAIL_SERVER';
 const EMAIL_MESSAGE = 'EMAIL_MESSAGE';
 
 const EmailWildduckStepper = class EmailWildduckStepper extends AStepper implements IHasOptions {
-    //   requireDomains = [EMAIL_BOX, EMAIL_MESSAGE];
+    // requireDomains = [EMAIL_SERVER, EMAIL_MESSAGE];
     options = {
         [EMAIL_SERVER]: {
             desc: 'Target email server',
@@ -25,46 +23,43 @@ const EmailWildduckStepper = class EmailWildduckStepper extends AStepper impleme
     async setWorld(world: TWorld, steppers: AStepper[]) {
         super.setWorld(world, steppers);
         this.world = world;
-        this.emailServer = getStepperOption(this, EMAIL_SERVER, this.world.options) || "gmail-smtp-in.l.google.com";
+        this.emailServer = getStepperOption(this, EMAIL_SERVER, this.world.extraOptions);
     }
     async getPolicy() {
-        // let knownPolicy = getCachedPolicy('gmail.com'); // optional
         const knownPolicy = undefined;
-        const res = await getPolicy(gmail, knownPolicy);
-        // if (res.policy.id !== knownPolicy?.id) {
-        // policy has been updated, update cache
-        // }
+        const res = await getPolicy(this.emailServer, knownPolicy);
         return res;
     }
 
     steps = {
         checkMTASTS: {
-            gwta: 'check MTA STS',
+            gwta: `domain's mail server agent strict transfer security is valid`,
             action: async () => {
                 const { policy } = await this.getPolicy();
 
-                const policyMatch = validateMx(this.emailServer, policy);
-                console.log('xx', policy, policyMatch);
-                if (!policy.id) {
-                    return actionNotOK(policyMatch);
+                for (const mx of policy.mx) {
+                    const policyMatch = validateMx(mx, policy);
+                    if (!policy.id) {
+                        return actionNotOK(policyMatch);
+                    }
+                    if (policy.mx && !policyMatch) {
+                        return actionNotOK(`unlisted MX ${mx}`);
+                    }
                 }
 
-
-                if (policy.mode === 'enforce') {
-                    // must use TLS
+                if (policy.mode !== 'enforce') {
+                    return actionNotOK(`not using enforce mode`);
                 }
 
-                if (policy.mx && !policyMatch) {
-                    // can't connect, unlisted MX
-                }
                 return OK;
             }
         },
         validateMXHostname: {
-            gwta: `validate MX hostname`,
+            gwta: `domain has a valid mail exchange record`,
             action: async () => {
                 const { policy } = await this.getPolicy();
                 const res = await validateMx(this.emailServer, policy);
+
                 return res === true ? OK : actionNotOK(res);
             }
         },
@@ -91,7 +86,6 @@ const EmailWildduckStepper = class EmailWildduckStepper extends AStepper impleme
                     }
                 );
                 // output authenticated message
-                console.log('🤑', JSON.stringify(dkim, null, 2));
                 process.stdout.write(headers); // includes terminating line break
                 process.stdout.write(message);
                 return OK;
@@ -107,7 +101,6 @@ const EmailWildduckStepper = class EmailWildduckStepper extends AStepper impleme
                     helo: 'foo',
                     mta: 'mx.myhost.com'
                 });
-                console.log(result.header);
                 return OK;
             }
         }
