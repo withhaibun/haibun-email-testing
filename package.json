@@ -29,6 +29,7 @@
   "license": "ISC",
   "dependencies": {
     "@haibun/core": "^1.2.4",
+    "dmarc-solution": "^1.2.5",
     "mailauth": "^4.0.1"
   },
   "devDependencies": {
