@@ -1,6 +1,6 @@
 {
   "name": "@haibun/email-testing",
-  "version": "1.10.3",
+  "version": "1.10.12",
   "description": "",
   "main": "build/web-http.js",
   "files": [
