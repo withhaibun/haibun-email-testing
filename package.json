@@ -1,6 +1,6 @@
 {
   "name": "@haibun/email-testing",
-  "version": "1.10.14",
+  "version": "1.11.1",
   "description": "",
   "main": "build/web-http.js",
   "files": [
@@ -28,7 +28,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@haibun/core": "^1.2.4",
+    "@haibun/core": "1.11.1",
     "dmarc-solution": "^1.2.5",
     "mailauth": "^4.0.1"
   },
