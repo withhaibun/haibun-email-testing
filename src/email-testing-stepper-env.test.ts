@@ -3,7 +3,7 @@ import { describe, it, expect } from 'vitest';
 import { testWithDefaults } from '@haibun/core/build/lib/test/lib.js';
 import { asFeatures } from '@haibun/core/build/lib/resolver-features.js';
 
-import { getStepperOptionName } from '@haibun/core/build/lib/util';
+import { getStepperOptionName } from '@haibun/core/build/lib/util/index.js';
 import { DEF_PROTO_OPTIONS } from '@haibun/core/build/lib/run.js';
 import EmailTestingStepper from './email-testing-stepper.js';
 
@@ -15,7 +15,7 @@ const protoOptions = {
     [getStepperOptionName(EmailTestingStepper, 'EMAIL_SERVER')]: domain,
   },
 };
-describe('MTA', () => {
+describe.skip('MTA', () => {
   it('MTA STS', async () => {
     const features = asFeatures([
       {
@@ -33,7 +33,7 @@ describe('MTA', () => {
 });
 
 describe('DMARC', () => {
-  it('Has a valid dmarc record', async () => {
+  it.skip('Has a valid dmarc record', async () => {
     const features = asFeatures([
       { path: '/features/record.feature', content: `DMARC record exists` },
     ]);

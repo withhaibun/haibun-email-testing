@@ -1,5 +1,4 @@
-import { OK } from '@haibun/core/build/lib/defs';
-import { actionNotOK } from '@haibun/core/build/lib/util';
+import { OK } from '@haibun/core/build/lib/defs.js';
 
 const { authenticate } = require('mailauth');
 const { dkimVerify } = require('mailauth/lib/dkim/verify');
