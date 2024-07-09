@@ -1,7 +1,7 @@
 import { OK } from '@haibun/core/build/lib/defs.js';
 import { actionNotOK } from '@haibun/core/build/lib/util/index.js';
 
-const dmarc = require('dmarc-solution');
+import dmarc from 'dmarc-solution';
 
 export async function checkDmarc(emailServer: string) {
   try {

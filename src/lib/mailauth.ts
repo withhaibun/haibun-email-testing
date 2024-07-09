@@ -1,8 +1,8 @@
 import { OK } from '@haibun/core/build/lib/defs.js';
 
-const { authenticate } = require('mailauth');
-const { dkimVerify } = require('mailauth/lib/dkim/verify');
-const { spf } = require('mailauth/lib/spf');
+import { authenticate } from 'mailauth';
+import { dkimVerify } from 'mailauth/lib/dkim/verify';
+import { spf } from 'mailauth/lib/spf';
 
 export async function emailAuthenticate() {
   const message = 'hello';

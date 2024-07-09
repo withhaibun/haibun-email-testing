@@ -1,8 +1,7 @@
 {
   "name": "haibun-email-tests",
   "type": "module",
-  "version": "1.40.8",
-  "type": "module",
+  "version": "1.40.2",
   "files": [
     "build/**"
   ],

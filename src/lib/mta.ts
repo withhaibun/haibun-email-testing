@@ -1,1 +1,3 @@
-export const { getPolicy, validateMx } = require('mailauth/lib/mta-sts');
+import { getPolicy, validateMx } from 'mailauth/lib/mta-sts';
+
+export {getPolicy, validateMx}
