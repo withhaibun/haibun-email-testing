@@ -1,6 +1,10 @@
 {
   "name": "haibun-email-tests",
+  "version": "1.40.7",
   "type": "module",
+  "files": [
+    "build/**"
+  ],
   "devDependencies": {
     "@types/node": "^20.14.10",
     "prettier": "^3.3.2",
@@ -10,7 +14,9 @@
   "dependencies": {
     "@haibun/cli": "1.40.6",
     "@haibun/core": "1.40.6",
+    "@types/imapflow": "^1.0.18",
     "dmarc-solution": "^1.2.5",
+    "imapflow": "^1.0.164",
     "mailauth": "^4.6.8"
   },
   "scripts": {

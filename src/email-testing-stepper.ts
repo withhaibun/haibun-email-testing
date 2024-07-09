@@ -1,11 +1,7 @@
-const { authenticate } = require('mailauth');
-const { dkimVerify } = require('mailauth/lib/dkim/verify');
-const { spf } = require('mailauth/lib/spf');
-const { getPolicy, validateMx } = require('mailauth/lib/mta-sts');
-const dmarc = require('dmarc-solution');
-
 import { AStepper, IHasOptions, OK, TNamed, TWorld } from '@haibun/core/build/lib/defs';
 import { actionNotOK, getStepperOption, stringOrError } from '@haibun/core/build/lib/util';
+import { checkDmarc, checkDmarcField } from './lib/dmarc';
+import { emailAuthenticate, emailSpf } from './lib/mailauth';
 
 const EMAIL_SERVER = 'EMAIL_SERVER';
 const EMAIL_MESSAGE = 'EMAIL_MESSAGE';
@@ -13,7 +9,6 @@ const EMAIL_MESSAGE = 'EMAIL_MESSAGE';
 const EmailTestingStepper = class EmailTestingStepper extends AStepper implements IHasOptions {
   knownPolicy = undefined;
   emailServer: undefined | string;
-  // requireDomains = [EMAIL_SERVER, EMAIL_MESSAGE];
   options = {
     [EMAIL_SERVER]: {
       desc: 'Target email server',
@@ -34,25 +29,25 @@ const EmailTestingStepper = class EmailTestingStepper extends AStepper implement
     dmarcExists: {
       gwta: `DMARC record exists`,
       action: async () => {
-        return this.checkDmarc(this.emailServer);
+        return checkDmarc(this.emailServer);
       },
     },
     dmarcExistsFor: {
       gwta: `DMARC record exists for {domain}`,
       action: async ({ domain }: TNamed) => {
-        return await this.checkDmarc(domain);
+        return await checkDmarc(domain);
       },
     },
     dmarcHas: {
       gwta: `DMARC field {field} is defined`,
       action: async ({ field }: TNamed) => {
-        return await this.checkDmarcField(this.emailServer, field);
+        return await checkDmarcField(this.emailServer, field);
       },
     },
     dmarcHasFor: {
       gwta: `DMARC field {field} is defined for {domain}`,
       action: async ({ domain, field }: TNamed) => {
-        return await this.checkDmarcField(this.emailServer, field);
+        return await checkDmarcField(this.emailServer, field);
       },
     },
     checkMTASTS: {
@@ -89,63 +84,16 @@ const EmailTestingStepper = class EmailTestingStepper extends AStepper implement
     authenticate: {
       gwta: `authenticate`,
       action: async () => {
-        const message = 'hello';
-        const { dkim, spf, arc, dmarc, bimi, receivedChain, headers } = await authenticate(
-          message, // either a String, a Buffer or a Readable Stream
-          {
-            // SMTP transmission options if available
-            ip: '217.146.67.33', // SMTP client IP
-            helo: 'uvn-67-33.tll01.zonevs.eu', // EHLO/HELO hostname
-            sender: 'andris@ekiri.ee', // MAIL FROM address
-
-            // Uncomment if you do not want to provide ip/helo/sender manually but parse from the message
-            //trustReceived: true,
-
-            // Server processing this message, defaults to os.hostname(). Inserted into Authentication headers
-            mta: 'mx.ethereal.email',
-
-            //  Optional  DNS resolver function (defaults to `dns.promises.resolve`)
-            // resolver: async (name: any, rr: any) => await dns.promises.resolve(name, rr)
-          },
-        );
-        // output authenticated message
-        process.stdout.write(headers); // includes terminating line break
-        process.stdout.write(message);
-        return OK;
+        return await emailAuthenticate();
       },
     },
     spf: {
       gwta: `spf`,
       action: async () => {
-        let result = await spf({
-          sender: 'andris@wildduck.email',
-          ip: '217.146.76.20',
-          helo: 'foo',
-          mta: 'mx.myhost.com',
-        });
-        return OK;
+        return await emailSpf();
       },
     },
   };
-  async checkDmarc(emailServer: string) {
-    try {
-      const record = await dmarc.fetch(this.emailServer);
-      return OK;
-    } catch (e: any) {
-      return actionNotOK(e.getMessage());
-    }
-  }
-  async checkDmarcField(emailServer: string, field: any) {
-    try {
-      const record = await dmarc.fetch(emailServer);
-      if (!record.tags[field]) {
-        return actionNotOK(`field ${field} doesn't exist`);
-      }
-      return OK;
-    } catch (e: any) {
-      return actionNotOK(e.getMessage());
-    }
-  }
 };
 
 export default EmailTestingStepper;
