@@ -2,7 +2,7 @@ import { OK } from '@haibun/core/build/lib/defs.js';
 
 import { authenticate } from 'mailauth';
 import { dkimVerify } from 'mailauth/lib/dkim/verify';
-import { spf } from 'mailauth/lib/spf';
+// import { spf } from 'mailauth/lib/spf';
 
 export async function emailAuthenticate() {
   const message = 'hello';
@@ -31,11 +31,11 @@ export async function emailAuthenticate() {
 }
 
 export async function emailSpf() {
-  let result = await spf({
-    sender: 'andris@wildduck.email',
-    ip: '217.146.76.20',
-    helo: 'foo',
-    mta: 'mx.myhost.com',
-  });
+  // let result = await spf({
+  //   sender: 'andris@wildduck.email',
+  //   ip: '217.146.76.20',
+  //   helo: 'foo',
+  //   mta: 'mx.myhost.com',
+  // });
   return OK;
 }

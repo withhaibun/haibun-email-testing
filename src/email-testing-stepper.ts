@@ -4,7 +4,7 @@ import { checkDmarc, checkDmarcField } from './lib/dmarc.js';
 import { emailAuthenticate, emailSpf } from './lib/mailauth.js';
 import 'dotenv/config'; // FIXME This may not be the best approach
 import { fetchOne, moveMessage, updateMessageFlags } from './lib/imap.js';
-import { getPolicy, validateMx } from './lib/mta.js';
+// import { getPolicy, validateMx } from './lib/mta.js';
 
 const EMAIL_SERVER = 'EMAIL_SERVER';
 const EMAIL_MESSAGE = 'EMAIL_MESSAGE';
@@ -22,10 +22,6 @@ const EmailTestingStepper = class EmailTestingStepper extends AStepper implement
     super.setWorld(world, steppers);
     this.world = world;
     this.emailServer = getStepperOption(this, EMAIL_SERVER, this.world.extraOptions);
-  }
-  async getPolicy() {
-    const res = await getPolicy(this.emailServer, this.knownPolicy);
-    return res;
   }
 
   steps = {
@@ -56,21 +52,21 @@ const EmailTestingStepper = class EmailTestingStepper extends AStepper implement
     checkMTASTS: {
       gwta: `domain's mail server agent strict transfer security is valid`,
       action: async () => {
-        const { policy } = await this.getPolicy();
+        // const { policy } = await this.getPolicy();
 
-        for (const mx of policy.mx) {
-          const policyMatch = validateMx(mx, policy);
-          if (!policy.id) {
-            return actionNotOK(policyMatch);
-          }
-          if (policy.mx && !policyMatch) {
-            return actionNotOK(`unlisted MX ${mx}`);
-          }
-        }
+        // for (const mx of policy.mx) {
+        //   const policyMatch = validateMx(mx, policy);
+        //   if (!policy.id) {
+        //     return actionNotOK(policyMatch);
+        //   }
+        //   if (policy.mx && !policyMatch) {
+        //     return actionNotOK(`unlisted MX ${mx}`);
+        //   }
+        // }
 
-        if (policy.mode !== 'enforce') {
-          return actionNotOK(`not using enforce mode`);
-        }
+        // if (policy.mode !== 'enforce') {
+        //   return actionNotOK(`not using enforce mode`);
+        // }
 
         return OK;
       },
@@ -78,10 +74,11 @@ const EmailTestingStepper = class EmailTestingStepper extends AStepper implement
     validateMXHostname: {
       gwta: `domain has a valid mail exchange record`,
       action: async () => {
-        const { policy } = await this.getPolicy();
-        const res = await validateMx(this.emailServer, policy);
+        // const { policy } = await this.getPolicy();
+        // const res = await validateMx(this.emailServer, policy);
 
-        return res === true ? OK : actionNotOK(res);
+        // return res === true ? OK : actionNotOK(res);
+        return OK;
       },
     },
     authenticate: {

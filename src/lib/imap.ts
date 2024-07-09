@@ -14,6 +14,13 @@ const flowParams = () => {
   return {
     host: mailHost,
     port: 993,
+    logger: {
+      log: () => {},
+      debug: () => {},
+      info: console.info,
+      warn: console.warn,
+      error: console.error,
+    },
     secure: true,
     auth: {
       user,
